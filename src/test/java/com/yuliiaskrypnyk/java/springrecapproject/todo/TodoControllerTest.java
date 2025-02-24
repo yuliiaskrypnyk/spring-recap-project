@@ -5,10 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,6 +21,9 @@ class TodoControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Autowired
+    TodoRepository todoRepository;
 
     @Test
     void getAllTodos() throws Exception {
@@ -33,6 +38,7 @@ class TodoControllerTest {
     }
 
     @Test
+    @DirtiesContext
     void postTodo() throws Exception {
         //GIVEN
 
@@ -56,5 +62,34 @@ class TodoControllerTest {
                         """))
                 .andExpect(jsonPath("$.id").isNotEmpty());
 
+    }
+
+    @Test
+    @DirtiesContext
+    void putTodo() throws Exception {
+        //GIVEN
+        Todo existingTodo = new Todo("1", "test-desctiption", "OPEN");
+
+        todoRepository.save(existingTodo);
+
+        //WHEN
+        mockMvc.perform(put("/api/todo/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "description": "test-description-2",
+                                    "status": "IN_PROGRESS"
+                                }
+                                
+                                """))
+                //THEN
+                .andExpect(status().isOk())
+                .andExpect(content().json("""
+                          {
+                          "id": "1",
+                            "description": "test-description-2",
+                            "status": "IN_PROGRESS"
+                        }
+                        """));
     }
 }

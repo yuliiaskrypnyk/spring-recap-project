@@ -25,4 +25,10 @@ public class TodoService {
         Todo todoToSave = new Todo(id, newTodo.description(), newTodo.status());
         return todoRepository.save(todoToSave);
     }
+
+    public Todo updateTodo(UpdateTodo todo, String id) {
+        Todo todoToUpdate = new Todo(id, todo.description(), todo.status());
+
+        return todoRepository.save(todoToUpdate);
+    }
 }
