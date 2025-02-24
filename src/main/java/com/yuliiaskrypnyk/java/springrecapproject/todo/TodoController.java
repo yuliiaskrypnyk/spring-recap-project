@@ -1,6 +1,8 @@
 package com.yuliiaskrypnyk.java.springrecapproject.todo;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,5 +20,10 @@ public class TodoController {
     @GetMapping
     public List<Todo> getAllTodos() {
         return todoService.findAllTodos();
+    }
+
+    @PostMapping
+    public Todo postTodo(@RequestBody NewTodo newTodo) {
+        return todoService.addTodo(newTodo);
     }
 }

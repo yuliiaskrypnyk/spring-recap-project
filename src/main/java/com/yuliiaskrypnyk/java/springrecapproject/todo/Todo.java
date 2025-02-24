@@ -4,6 +4,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "task")
 public record Todo(
-        String id
+        String id,
+        String description,
+        String status
 ) {
 }
