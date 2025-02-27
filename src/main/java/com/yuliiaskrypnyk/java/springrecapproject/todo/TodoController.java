@@ -1,5 +1,6 @@
 package com.yuliiaskrypnyk.java.springrecapproject.todo;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,11 @@ public class TodoController {
         return todoService.findAllTodos();
     }
 
+    @GetMapping("{id}")
+    public Todo getTodoById(@PathVariable String id) {
+        return todoService.findTodoById(id);
+    }
+
     @PostMapping
     public Todo postTodo(@RequestBody NewTodo newTodo) {
         return todoService.addTodo(newTodo);
@@ -32,5 +38,10 @@ public class TodoController {
     @PutMapping("{id}")
     public Todo putTodo(@RequestBody UpdateTodo todo, @PathVariable String id) {
         return todoService.updateTodo(todo, id);
+    }
+
+    @DeleteMapping("{id}")
+    public void deleteTodo(@PathVariable String id) {
+        todoService.deleteTodo(id);
     }
 }

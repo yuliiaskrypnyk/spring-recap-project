@@ -9,8 +9,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -91,5 +93,50 @@ class TodoControllerTest {
                             "status": "IN_PROGRESS"
                         }
                         """));
+    }
+
+    @Test
+    @DirtiesContext
+    void getById() throws Exception {
+        //GIVEN
+        Todo existingTodo = new Todo("1", "test-description", TodoStatus.OPEN);
+        todoRepository.save(existingTodo);
+
+        //WHEN
+        mockMvc.perform(get("/api/todo/1"))
+                //THEN
+                .andExpect(status().isOk())
+                .andExpect(content().json("""
+                            {
+                                "id": "1",
+                                "description": "test-description",
+                                "status": "OPEN"
+                            }
+                        """));
+
+    }
+
+    @Test
+    @DirtiesContext
+    void getByIdTest_whenInvalidId_thenStatus404() throws Exception {
+        //GIVEN
+        //WHEN
+
+        mockMvc.perform(get("/api/todo/1"))
+                //THEN
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DirtiesContext
+    void deleteTodoById() throws Exception {
+        //GIVEN
+        Todo existingTodo = new Todo("1", "test-description", TodoStatus.OPEN);
+        todoRepository.save(existingTodo);
+
+        //WHEN
+        mockMvc.perform(delete("/api/todo/1"))
+                //THEN
+                .andExpect(status().isOk());
     }
 }
